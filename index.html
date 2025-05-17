@@ -5,115 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор скорости жидкости</title>
     <style>
+        :root {
+            --main-color: #2c7be5;
+            --border-color: #e3ebf6;
+            --text-color: #12263f;
+            --bg-color: #f9fbfd;
+            --input-bg: #ffffff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 15px;
         }
-        h2 {
-            color: #34495e;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            font-size: 1.5rem;
-        }
+        
         .calculator {
             background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .calculator-header {
+            background-color: var(--main-color);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .calculator-body {
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .form-group {
-            margin-bottom: 15px;
+        
+        .input-group {
+            margin-bottom: 20px;
         }
-        label {
+        
+        .input-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 1rem;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-color);
         }
-        .input-with-unit {
-            display: flex;
-            align-items: center;
-        }
-        .input-with-unit span {
-            margin-left: 8px;
-            white-space: nowrap;
-        }
-        input {
+        
+        .input-group input, 
+        .input-group select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 1rem;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: var(--input-bg);
+            transition: border-color 0.2s;
         }
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            font-size: 1rem;
-            margin-bottom: 5px;
+        
+        .input-group input:focus, 
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--main-color);
+            box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1);
         }
-        .result {
-            margin-top: 20px;
+        
+        .results {
+            background-color: var(--bg-color);
+            border-radius: 8px;
             padding: 15px;
-            background-color: #e8f4fc;
-            border-radius: 4px;
-            font-size: 1.1rem;
+            margin-top: 10px;
         }
-        .unit {
-            color: #7f8c8d;
-            font-size: 0.9em;
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        /* Мобильная адаптация */
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-size: 14px;
+            color: #6e84a3;
+        }
+        
+        .result-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--main-color);
+        }
+        
+        /* .unit-label removed since we moved the unit into the label */
+        
         @media (max-width: 480px) {
-            body {
+            .container {
                 padding: 10px;
             }
-            .calculator {
+            
+            .calculator-header {
+                padding: 12px 15px;
+                font-size: 16px;
+            }
+            
+            .calculator-body {
                 padding: 15px;
             }
-            h2 {
-                font-size: 1.3rem;
-            }
-            input, select {
-                padding: 10px;
-            }
-            .result {
-                padding: 12px;
-                font-size: 1rem;
+            
+            .input-group input, 
+            .input-group select {
+                padding: 10px 12px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <h2>Скорость жидкости</h2>
-        
-        <div class="form-group">
-            <label for="flow-rate">Расход жидкости (L):</label>
-            <input type="number" id="flow-rate" step="0.001" placeholder="-" value="">
-            <select id="flow-unit">
-                <option value="m3h">м³/час</option>
-                <option value="lmin">литр/минута</option>
-                <option value="ls">литр/секунда</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Внутренний диаметр трубопровода (D<sub>B</sub>), мм:</label>
-            <div class="input-with-unit">
-                <input type="number" id="diameter" step="0.1" placeholder="-" value="">
+    <div class="container">
+        <div class="calculator">
+            <div class="calculator-header">
+                Скорость жидкости в трубопроводе
             </div>
-        </div>
-        
-        <div id="result" class="result">
-            <strong>Скорость жидкости (V):</strong> <span id="velocity-result">0</span> м/с
+            <div class="calculator-body">
+                <div class="input-group">
+                    <label for="flow-rate">Расход жидкости</label>
+                    <input type="number" id="flow-rate" step="0.001" placeholder="Введите значение">
+                    <select id="flow-unit">
+                        <option value="m3h">м³/час</option>
+                        <option value="lmin">л/мин</option>
+                        <option value="ls">л/сек</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="diameter">Внутренний диаметр трубопровода, мм</label>
+                    <input type="number" id="diameter" step="0.1" placeholder="Введите значение">
+                </div>
+                
+                <div class="results">
+                    <div class="result-item">
+                        <span class="result-label">Скорость жидкости</span>
+                        <span id="velocity-result" class="result-value">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Единица измерения</span>
+                        <span class="result-value">м/с</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -138,16 +195,25 @@
             }
         }
         
+        // Функция для форматирования числа с двумя знаками после запятой
+        function formatNumber(num) {
+            if (isNaN(num)) return '-';
+            return num.toLocaleString('ru-RU', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        
         // Функция для расчета скорости
         function calculateVelocity() {
-            // Получаем значения из полей ввода
-            const flowRate = parseFloat(flowRateInput.value) || 0;
-            const diameter = parseFloat(diameterInput.value) || 0;
+            // Получаем текущие значения
+            const flowRate = parseFloat(flowRateInput.value);
+            const diameter = parseFloat(diameterInput.value);
             const flowUnit = flowUnitSelect.value;
             
-            // Если диаметр не введен или равен 0, устанавливаем скорость 0
-            if (diameter <= 0) {
-                velocityResult.textContent = "0";
+            // Проверяем, что значения введены корректно
+            if (isNaN(flowRate) || isNaN(diameter) || diameter <= 0) {
+                velocityResult.textContent = '-';
                 return;
             }
             
@@ -163,17 +229,14 @@
             // Рассчитываем скорость жидкости
             const velocity = flowRateInM3s / area;
             
-            // Отображаем результат с округлением до 3 знаков после запятой
-            velocityResult.textContent = velocity.toFixed(3);
+            // Отображаем результат
+            velocityResult.textContent = formatNumber(velocity);
         }
         
         // Добавляем обработчики событий для динамического расчета
         flowRateInput.addEventListener('input', calculateVelocity);
         flowUnitSelect.addEventListener('change', calculateVelocity);
         diameterInput.addEventListener('input', calculateVelocity);
-        
-        // Вызываем расчет при загрузке страницы
-        calculateVelocity();
     </script>
 </body>
 </html>
