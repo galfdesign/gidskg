@@ -33,6 +33,14 @@
             font-weight: bold;
             font-size: 1rem;
         }
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+        }
+        .input-with-unit span {
+            margin-left: 8px;
+            white-space: nowrap;
+        }
         input {
             width: 100%;
             padding: 12px;
@@ -60,7 +68,6 @@
         .unit {
             color: #7f8c8d;
             font-size: 0.9em;
-            margin-top: 3px;
         }
 
         /* Мобильная адаптация */
@@ -90,7 +97,7 @@
         
         <div class="form-group">
             <label for="flow-rate">Расход жидкости (L):</label>
-            <input type="number" id="flow-rate" step="0.001" placeholder="Введите расход жидкости" value="0">
+            <input type="number" id="flow-rate" step="0.001" placeholder="-" value="">
             <select id="flow-unit">
                 <option value="m3h">м³/час</option>
                 <option value="lmin">литр/минута</option>
@@ -99,9 +106,10 @@
         </div>
         
         <div class="form-group">
-            <label for="diameter">Внутренний диаметр трубопровода (D<sub>B</sub>):</label>
-            <input type="number" id="diameter" step="0.1" placeholder="Введите диаметр трубопровода" value="0">
-            <span class="unit">мм</span>
+            <label>Внутренний диаметр трубопровода (D<sub>B</sub>), мм:</label>
+            <div class="input-with-unit">
+                <input type="number" id="diameter" step="0.1" placeholder="-" value="">
+            </div>
         </div>
         
         <div id="result" class="result">
@@ -133,12 +141,12 @@
         // Функция для расчета скорости
         function calculateVelocity() {
             // Получаем значения из полей ввода
-            const flowRate = parseFloat(flowRateInput.value);
-            const diameter = parseFloat(diameterInput.value);
+            const flowRate = parseFloat(flowRateInput.value) || 0;
+            const diameter = parseFloat(diameterInput.value) || 0;
             const flowUnit = flowUnitSelect.value;
             
-            // Если значения не введены или равны 0, устанавливаем скорость 0
-            if (isNaN(flowRate) || isNaN(diameter) || diameter <= 0) {
+            // Если диаметр не введен или равен 0, устанавливаем скорость 0
+            if (diameter <= 0) {
                 velocityResult.textContent = "0";
                 return;
             }
