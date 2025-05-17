@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор скорости жидкости</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            font-size: 1.5rem;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            font-size: 1.1rem;
+        }
+        .unit {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 3px;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .calculator {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            input {
+                padding: 10px;
+            }
+            .result {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>Скорость жидкости</h2>
+        
+        <div class="form-group">
+            <label for="flow-rate">Расход жидкости (L):</label>
+            <input type="number" id="flow-rate" step="0.001" placeholder="Введите расход жидкости" value="0">
+            <span class="unit">м³/час</span>
+        </div>
+        
+        <div class="form-group">
+            <label for="diameter">Внутренний диаметр трубопровода (D<sub>B</sub>):</label>
+            <input type="number" id="diameter" step="0.1" placeholder="Введите диаметр трубопровода" value="0">
+            <span class="unit">мм</span>
+        </div>
+        
+        <div id="result" class="result">
+            <strong>Скорость жидкости (V):</strong> <span id="velocity-result">0</span> м/с
+        </div>
+    </div>
+
+    <script>
+        // Получаем элементы DOM
+        const flowRateInput = document.getElementById('flow-rate');
+        const diameterInput = document.getElementById('diameter');
+        const velocityResult = document.getElementById('velocity-result');
+        
+        // Функция для расчета скорости
+        function calculateVelocity() {
+            // Получаем значения из полей ввода
+            const flowRate = parseFloat(flowRateInput.value);
+            const diameter = parseFloat(diameterInput.value);
+            
+            // Если значения не введены или равны 0, устанавливаем скорость 0
+            if (isNaN(flowRate) || isNaN(diameter) || diameter <= 0) {
+                velocityResult.textContent = "0";
+                return;
+            }
+            
+            // Переводим расход из м³/час в м³/с (делим на 3600)
+            const flowRateInM3s = flowRate / 3600;
+            
+            // Переводим диаметр из мм в м
+            const diameterInMeters = diameter / 1000;
+            
+            // Рассчитываем площадь поперечного сечения трубы
+            const area = Math.PI * Math.pow(diameterInMeters / 2, 2);
+            
+            // Рассчитываем скорость жидкости
+            const velocity = flowRateInM3s / area;
+            
+            // Отображаем результат с округлением до 3 знаков после запятой
+            velocityResult.textContent = velocity.toFixed(3);
+        }
+        
+        // Добавляем обработчики событий для динамического расчета
+        flowRateInput.addEventListener('input', calculateVelocity);
+        diameterInput.addEventListener('input', calculateVelocity);
+        
+        // Вызываем расчет при загрузке страницы
+        calculateVelocity();
+    </script>
+</body>
+</html>
