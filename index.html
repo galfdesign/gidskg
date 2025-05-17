@@ -41,6 +41,15 @@
             box-sizing: border-box;
             font-size: 1rem;
         }
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
         .result {
             margin-top: 20px;
             padding: 15px;
@@ -65,7 +74,7 @@
             h2 {
                 font-size: 1.3rem;
             }
-            input {
+            input, select {
                 padding: 10px;
             }
             .result {
@@ -82,7 +91,11 @@
         <div class="form-group">
             <label for="flow-rate">Расход жидкости (L):</label>
             <input type="number" id="flow-rate" step="0.001" placeholder="Введите расход жидкости" value="0">
-            <span class="unit">м³/час</span>
+            <select id="flow-unit">
+                <option value="m3h">м³/час</option>
+                <option value="lmin">литр/минута</option>
+                <option value="ls">литр/секунда</option>
+            </select>
         </div>
         
         <div class="form-group">
@@ -99,14 +112,30 @@
     <script>
         // Получаем элементы DOM
         const flowRateInput = document.getElementById('flow-rate');
+        const flowUnitSelect = document.getElementById('flow-unit');
         const diameterInput = document.getElementById('diameter');
         const velocityResult = document.getElementById('velocity-result');
+        
+        // Функция для конвертации расхода в м³/с
+        function convertToM3s(flowRate, unit) {
+            switch(unit) {
+                case 'm3h':  // м³/час -> м³/с
+                    return flowRate / 3600;
+                case 'lmin': // литр/минута -> м³/с
+                    return flowRate / 60000;
+                case 'ls':   // литр/секунда -> м³/с
+                    return flowRate / 1000;
+                default:
+                    return flowRate;
+            }
+        }
         
         // Функция для расчета скорости
         function calculateVelocity() {
             // Получаем значения из полей ввода
             const flowRate = parseFloat(flowRateInput.value);
             const diameter = parseFloat(diameterInput.value);
+            const flowUnit = flowUnitSelect.value;
             
             // Если значения не введены или равны 0, устанавливаем скорость 0
             if (isNaN(flowRate) || isNaN(diameter) || diameter <= 0) {
@@ -114,8 +143,8 @@
                 return;
             }
             
-            // Переводим расход из м³/час в м³/с (делим на 3600)
-            const flowRateInM3s = flowRate / 3600;
+            // Конвертируем расход в м³/с
+            const flowRateInM3s = convertToM3s(flowRate, flowUnit);
             
             // Переводим диаметр из мм в м
             const diameterInMeters = diameter / 1000;
@@ -132,6 +161,7 @@
         
         // Добавляем обработчики событий для динамического расчета
         flowRateInput.addEventListener('input', calculateVelocity);
+        flowUnitSelect.addEventListener('change', calculateVelocity);
         diameterInput.addEventListener('input', calculateVelocity);
         
         // Вызываем расчет при загрузке страницы
